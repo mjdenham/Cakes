@@ -4,29 +4,23 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.martin.cakes.model.CakeDto
 import com.martin.cakes.ui.theme.CakesTheme
 
@@ -40,7 +34,7 @@ class MainActivity : ComponentActivity() {
             CakesTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Greeting(viewModel.getCake())
+                    Cakes(viewModel.getCakes())
                 }
             }
         }
@@ -48,9 +42,18 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(cake: CakeDto) {
+fun Cakes(cakes: List<CakeDto>) {
+    LazyColumn {
+        items(cakes) { cake ->
+            Cake(cake)
+        }
+    }
+}
+
+@Composable
+fun Cake(cake: CakeDto) {
     Row {
-        Column(verticalArrangement = Arrangement.Center) {
+        Column {
             //TODO handle image loading errors
             AsyncImage(
                 model = cake.image,
@@ -64,7 +67,6 @@ fun Greeting(cake: CakeDto) {
 
         Column {
             Text(text = "${cake.title}")
-            Text(text = "${cake.desc}")
         }
     }
 }
@@ -73,6 +75,12 @@ fun Greeting(cake: CakeDto) {
 @Composable
 fun DefaultPreview() {
     CakesTheme {
-        Greeting(CakeDto("Banana cake", "Donkey kongs favourite", "https://s3-eu-west-1.amazonaws.com/s3.mediafileserver.co.uk/carnation/WebFiles/RecipeImages/lemoncheesecake_lg.jpg"))
+        Cakes(
+            listOf(
+                CakeDto("Banana cake", "Donkey kongs favourite", "https://s3-eu-west-1.amazonaws.com/s3.mediafileserver.co.uk/carnation/WebFiles/RecipeImages/lemoncheesecake_lg.jpg"),
+                CakeDto("Other cake", "Marios favourite", "https://s3-eu-west-1.amazonaws.com/s3.mediafileserver.co.uk/carnation/WebFiles/RecipeImages/lemoncheesecake_lg.jpg"),
+                CakeDto("Yet another cake", "Marios favourite", "https://s3-eu-west-1.amazonaws.com/s3.mediafileserver.co.uk/carnation/WebFiles/RecipeImages/lemoncheesecake_lg.jpg"),
+            )
+        )
     }
 }
