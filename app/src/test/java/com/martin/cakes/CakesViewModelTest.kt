@@ -3,11 +3,9 @@ package com.martin.cakes
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.martin.cakes.model.CakeDto
 import com.martin.cakes.model.ICakesClient
-import com.martin.cakes.ui.theme.CakesResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
