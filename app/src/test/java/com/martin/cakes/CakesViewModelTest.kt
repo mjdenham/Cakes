@@ -13,6 +13,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 import retrofit2.Response
+import java.io.IOException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CakesViewModelTest {
@@ -50,6 +51,14 @@ class CakesViewModelTest {
         assertEquals("Banana cake should be sorted first", cakes[0], BANANA_CAKE)
     }
 
+    @Test
+    fun cakes_error() = runTest {
+        val errorViewModel = CakesViewModel(errorTestClient, Dispatchers.Main)
+        val liveData = errorViewModel.getCakes()
+        val value = liveData.value
+        assertTrue("Expected Error", value is CakesResponse.Error)
+    }
+
     private val testClient = object : ICakesClient {
         override fun getCakes(): Response<List<CakeDto>> {
             return Response.success(
@@ -60,6 +69,12 @@ class CakesViewModelTest {
                     YET_ANOTHER_CAKE
                 )
             )
+        }
+    }
+
+    private val errorTestClient = object : ICakesClient {
+        override fun getCakes(): Response<List<CakeDto>> {
+            throw IOException("Simulated error")
         }
     }
 
