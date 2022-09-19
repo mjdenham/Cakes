@@ -7,13 +7,9 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -30,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -86,35 +83,34 @@ fun Cakes(cakes: List<CakeDto>, onClick: (CakeDto) -> Unit) {
     LazyColumn {
         items(cakes) { cake ->
             Cake(cake) { onClick(cake) }
-            Divider(color = MaterialTheme.colors.primary)
+            Divider()
         }
     }
 }
 
 @Composable
 fun Cake(cake: CakeDto, onClick: () -> Unit) {
-    Row(modifier = Modifier.clickable { onClick() }) {
-        Column(modifier = Modifier.padding(6.dp)) {
-            //TODO handle image loading errors
-            AsyncImage(
-                model = cake.image,
-                contentDescription = "Cake image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(45.dp)
-                    .clip(CircleShape)
-            )
-        }
+    Row(
+        verticalAlignment = CenterVertically,
+        modifier = Modifier
+            .clickable { onClick() }
+            .fillMaxSize(1F),
+        ) {
+        //TODO handle image loading errors
+        AsyncImage(
+            model = cake.image,
+            contentDescription = "Cake image",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .padding(10.dp)
+                .size(45.dp)
+                .clip(CircleShape)
+        )
 
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Column( modifier = Modifier.fillMaxWidth(1F)) {
-            Spacer(modifier = Modifier.height(14.dp))
-            Text(
-                text = "${cake.title}",
-                color = MaterialTheme.colors.primary
-            )
-        }
+        Text(
+            text = "${cake.title}",
+            color = MaterialTheme.colors.primary
+        )
     }
 }
 
@@ -128,11 +124,16 @@ fun ShowCakeDetail(cake: CakeDto, hideCakeDetail: () -> Unit) {
             title = {
                 Text(
                     text = cake.title,
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.typography.h5.color,
+                    fontSize = MaterialTheme.typography.h5.fontSize
                 )
             },
             text = {
-                Text(text = cake.desc)
+                Text(
+                    text = cake.desc,
+                    color = MaterialTheme.typography.body1.color,
+                    fontSize = MaterialTheme.typography.body1.fontSize
+                )
             },
             confirmButton = {
                 Button(
