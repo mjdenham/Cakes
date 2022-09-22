@@ -21,9 +21,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -46,30 +44,29 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val cakesResponse: State<CakesResponse> = viewModel.getCakes().observeAsState(CakesResponse.Loading)
+            val cakesResponse: CakesResponse = viewModel.cakes.collectAsState(initial = CakesResponse.Loading).value
             val currentSelectedItem: MutableState<CakeDto?> = remember { mutableStateOf(null) }
 
             CakesTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    cakesResponse.value.let { response ->
-                        if (response is CakesResponse.Success) {
+                    cakesResponse.let { response ->
+                        val isRefreshing: Boolean = viewModel.refreshing.collectAsState(initial = false).value
 
-                            val isRefreshing: Boolean? by viewModel.isRefreshing().observeAsState()
-
-                            SwipeRefresh(
-                                state = rememberSwipeRefreshState(isRefreshing ?: false),
-                                onRefresh = { viewModel.refresh() },
-                            ) {
-                                Cakes(response.data) { cake ->
+                        SwipeRefresh(
+                            state = rememberSwipeRefreshState(isRefreshing),
+                            onRefresh = { viewModel.refresh() },
+                        ) {
+                            if (response is CakesResponse.Success) {
+                                    Cakes(response.data) { cake ->
                                     currentSelectedItem.value = cake
                                 }
-                            }
 
-                            currentSelectedItem.value?.let { selectedCake ->
-                                ShowCakeDetail(selectedCake) { currentSelectedItem.value = null }
+                                currentSelectedItem.value?.let { selectedCake ->
+                                    ShowCakeDetail(selectedCake) { currentSelectedItem.value = null }
+                                }
+                            } else if (response is CakesResponse.Error) {
+                                ShowErrorMessage {viewModel.refresh()}
                             }
-                        } else if (response is CakesResponse.Error) {
-                            ShowErrorMessage {viewModel.refresh()}
                         }
                     }
                 }
