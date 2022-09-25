@@ -21,7 +21,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -31,6 +30,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -41,16 +42,17 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: CakesViewModel by viewModels()
 
+    @OptIn(ExperimentalLifecycleComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val cakesResponse: CakesResponse = viewModel.cakes.collectAsState(initial = CakesResponse.Loading).value
+            val cakesResponse: CakesResponse = viewModel.cakes.collectAsStateWithLifecycle(initialValue = CakesResponse.Loading).value
             val currentSelectedItem: MutableState<CakeDto?> = remember { mutableStateOf(null) }
 
             CakesTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
                     cakesResponse.let { response ->
-                        val isRefreshing: Boolean = viewModel.refreshing.collectAsState(initial = false).value
+                        val isRefreshing: Boolean = viewModel.refreshing.collectAsStateWithLifecycle(initialValue = false).value
 
                         SwipeRefresh(
                             state = rememberSwipeRefreshState(isRefreshing),
