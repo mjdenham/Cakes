@@ -39,10 +39,8 @@ import com.martin.cakes.ui.theme.CakesTheme
 fun CakesScreen(showCakeDetail: (CakeDto) -> Unit, viewModel: CakesViewModel = viewModel(), ) {
     val cakesResponse: CakesResponse = viewModel.cakes.collectAsStateWithLifecycle(initialValue = CakesResponse.Loading).value
     cakesResponse.let { response ->
-        val isRefreshing: Boolean = viewModel.refreshing.collectAsStateWithLifecycle(initialValue = false).value
-
         SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing),
+            state = rememberSwipeRefreshState(cakesResponse is CakesResponse.Loading),
             onRefresh = { viewModel.refresh() },
         ) {
             if (response is CakesResponse.Success) {
