@@ -29,8 +29,6 @@ class MainActivity : ComponentActivity() {
                     currentSelectedItem.value?.let { selectedCake ->
                         ShowCakeDetail(selectedCake) { currentSelectedItem.value = null }
                     }
-
-
                 }
             }
         }
