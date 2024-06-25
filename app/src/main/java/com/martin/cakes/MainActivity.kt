@@ -10,12 +10,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -26,6 +30,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,6 +75,7 @@ fun Cakes(cakes: List<CakeDto>, onClick: (CakeDto) -> Unit) {
     LazyColumn {
         items(cakes) { cake ->
             Cake(cake) { onClick(cake) }
+            Divider(color = MaterialTheme.colors.primary)
         }
     }
 }
@@ -76,20 +83,26 @@ fun Cakes(cakes: List<CakeDto>, onClick: (CakeDto) -> Unit) {
 @Composable
 fun Cake(cake: CakeDto, onClick: () -> Unit) {
     Row(modifier = Modifier.clickable { onClick() }) {
-        Column {
+        Column(modifier = Modifier.padding(6.dp)) {
             //TODO handle image loading errors
             AsyncImage(
                 model = cake.image,
                 contentDescription = "Cake image",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(45.dp)
+                    .clip(CircleShape)
             )
         }
 
         Spacer(modifier = Modifier.width(8.dp))
 
         Column( modifier = Modifier.fillMaxWidth(1F)) {
-            Text(text = "${cake.title}")
+            Spacer(modifier = Modifier.height(14.dp))
+            Text(
+                text = "${cake.title}",
+                color = MaterialTheme.colors.primary
+            )
         }
     }
 }
@@ -105,10 +118,13 @@ fun ShowCakeDetail(cake: CakeDto, hideCakeDetail: () -> Unit) {
                 hideCakeDetail()
             },
             title = {
-                Text(text = cake.title)
+                Text(
+                    text = cake.title,
+                    color = MaterialTheme.colors.primary
+                )
             },
             text = {
-                Text(cake.desc)
+                Text(text = cake.desc)
             },
             confirmButton = {
                 Button(
