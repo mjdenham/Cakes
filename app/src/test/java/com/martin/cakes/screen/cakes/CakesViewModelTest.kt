@@ -32,7 +32,7 @@ class CakesViewModelTest {
 
     @Test
     fun cake_duplicates_should_be_removed() = runTest {
-        val value = viewModel.cakes.drop(1).first()
+        val value = viewModel.cakes.first()
         Assert.assertTrue("Expected Success", value is CakesResponse.Success)
         val success = value as CakesResponse.Success
         val cakes = success.data
@@ -41,7 +41,7 @@ class CakesViewModelTest {
 
     @Test
     fun cakes_should_be_sorted_by_name() = runTest {
-        val value = viewModel.cakes.drop(1).first()
+        val value = viewModel.cakes.first()
         Assert.assertTrue("Expected Success", value is CakesResponse.Success)
         val success = value as CakesResponse.Success
         val cakes = success.data
