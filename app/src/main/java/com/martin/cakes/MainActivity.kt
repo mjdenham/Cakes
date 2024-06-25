@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.martin.cakes.model.CakeDto
+import com.martin.cakes.ui.theme.CakesResponse
 import com.martin.cakes.ui.theme.CakesTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,18 +41,22 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val cakes: State<List<CakeDto>?> = viewModel.getCakes().observeAsState()
+            val cakesResponse: State<CakesResponse> = viewModel.getCakes().observeAsState(CakesResponse.Loading)
             val currentSelectedItem: MutableState<CakeDto?> = remember { mutableStateOf(null) }
 
             CakesTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Cakes(cakes.value ?: emptyList()) { cake ->
-                        currentSelectedItem.value = cake
-                    }
+                    cakesResponse.value.let { response ->
+                        if (response is CakesResponse.Success) {
+                            Cakes(response.data) { cake ->
+                                currentSelectedItem.value = cake
+                            }
 
-                    currentSelectedItem.value?.let { selectedCake ->
-                        ShowCakeDetail(selectedCake) { currentSelectedItem.value = null }
+                            currentSelectedItem.value?.let { selectedCake ->
+                                ShowCakeDetail(selectedCake) { currentSelectedItem.value = null }
+                            }
+                        }
                     }
                 }
             }
