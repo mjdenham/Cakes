@@ -5,19 +5,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.martin.cakes.model.CakeDto
 import com.martin.cakes.model.CakesClient
 import com.martin.cakes.model.ICakesClient
 import com.martin.cakes.ui.theme.CakesResponse
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CakesViewModel(private val cakesClient: ICakesClient = CakesClient()): ViewModel() {
+class CakesViewModel(private val cakesClient: ICakesClient = CakesClient(), private val dispatcher: CoroutineDispatcher = Dispatchers.IO): ViewModel() {
 
     //TODO migrate to MutableStateFlow eventually
-    private val cakes: MutableLiveData<CakesResponse> by lazy {
-        MutableLiveData<CakesResponse>().also {
-            loadCakes()
-        }
+    private val cakes = MutableLiveData<CakesResponse>()
+
+    init {
+        loadCakes()
     }
 
     fun getCakes(): LiveData<CakesResponse> {
@@ -25,10 +27,14 @@ class CakesViewModel(private val cakesClient: ICakesClient = CakesClient()): Vie
     }
 
     private fun loadCakes() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             val response = cakesClient.getCakes()
             if (response.isSuccessful) {
-                cakes.postValue(CakesResponse.Success(response.body() ?: emptyList()))
+                val cakeList: List<CakeDto> = response.body() ?: emptyList()
+                val organisedCakeList = cakeList.distinct()
+                    .sortedBy { it.title }
+
+                cakes.postValue(CakesResponse.Success(organisedCakeList))
             } else {
                 Log.e(TAG, "Error querying repo ${response.message()}")
                 cakes.postValue(CakesResponse.Error)
