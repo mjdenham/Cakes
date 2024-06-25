@@ -1,13 +1,17 @@
 package com.martin.cakes.ui.screen.cake
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.martin.cakes.R
 import com.martin.cakes.model.CakeDto
 import com.martin.cakes.ui.theme.CakesTheme
@@ -16,21 +20,22 @@ import com.martin.cakes.ui.theme.CakesTheme
 fun ShowCakeDetail(cake: CakeDto, hideCakeDetail: () -> Unit) {
     Column {
         AlertDialog(
+            modifier = Modifier.clip(RoundedCornerShape(12.dp)),
             onDismissRequest = {
                 hideCakeDetail()
             },
             title = {
                 Text(
                     text = cake.title,
-                    color = MaterialTheme.typography.h5.color,
-                    fontSize = MaterialTheme.typography.h5.fontSize
+                    color = MaterialTheme.typography.headlineSmall.color,
+                    fontSize = MaterialTheme.typography.headlineSmall.fontSize
                 )
             },
             text = {
                 Text(
                     text = cake.desc,
-                    color = MaterialTheme.typography.body1.color,
-                    fontSize = MaterialTheme.typography.body1.fontSize
+                    color = MaterialTheme.typography.bodyLarge.color,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize
                 )
             },
             confirmButton = {
