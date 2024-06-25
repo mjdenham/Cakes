@@ -20,6 +20,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -37,20 +40,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val cakes = viewModel.getCakes()
-            val currentSelectedItem = remember { mutableStateOf(cakes[0]) }
-            val showDialog = remember { mutableStateOf(false) }
+            val cakes: State<List<CakeDto>?> = viewModel.getCakes().observeAsState()
+            val currentSelectedItem: MutableState<CakeDto?> = remember { mutableStateOf(null) }
 
             CakesTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Cakes(cakes) { cake ->
+                    Cakes(cakes.value ?: emptyList()) { cake ->
                         currentSelectedItem.value = cake
-                        showDialog.value = true
                     }
 
-                    if (showDialog.value) {
-                        ShowCakeDetail(currentSelectedItem.value) { showDialog.value = false }
+                    currentSelectedItem.value?.let { selectedCake ->
+                        ShowCakeDetail(selectedCake) { currentSelectedItem.value = null }
                     }
                 }
             }
