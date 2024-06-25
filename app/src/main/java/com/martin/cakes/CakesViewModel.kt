@@ -17,6 +17,7 @@ class CakesViewModel(private val cakesClient: ICakesClient = CakesClient(), priv
 
     //TODO migrate to MutableStateFlow eventually
     private val cakes = MutableLiveData<CakesResponse>()
+    private val refreshing = MutableLiveData<Boolean>(false)
 
     init {
         loadCakes()
@@ -26,8 +27,13 @@ class CakesViewModel(private val cakesClient: ICakesClient = CakesClient(), priv
         return cakes
     }
 
+    fun isRefreshing(): LiveData<Boolean> = refreshing
+
     private fun loadCakes() {
+        Log.d(TAG, "Loading cakes")
         viewModelScope.launch(dispatcher) {
+            cakes.postValue(CakesResponse.Loading)
+            refreshing.postValue(true)
             val response = cakesClient.getCakes()
             if (response.isSuccessful) {
                 val cakeList: List<CakeDto> = response.body() ?: emptyList()
@@ -39,7 +45,12 @@ class CakesViewModel(private val cakesClient: ICakesClient = CakesClient(), priv
                 Log.e(TAG, "Error querying repo ${response.message()}")
                 cakes.postValue(CakesResponse.Error)
             }
+            refreshing.postValue(false)
         }
+    }
+
+    fun refresh() {
+        loadCakes()
     }
 
     companion object {
