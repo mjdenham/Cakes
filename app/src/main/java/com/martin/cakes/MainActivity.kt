@@ -40,7 +40,6 @@ import coil.compose.AsyncImage
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.martin.cakes.model.CakeDto
-import com.martin.cakes.ui.theme.CakesResponse
 import com.martin.cakes.ui.theme.CakesTheme
 
 class MainActivity : ComponentActivity() {

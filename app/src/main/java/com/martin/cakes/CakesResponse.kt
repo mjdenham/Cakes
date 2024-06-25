@@ -1,4 +1,4 @@
-package com.martin.cakes.ui.theme
+package com.martin.cakes
 
 import com.martin.cakes.model.CakeDto
 
