@@ -35,7 +35,7 @@ class CakesViewModel: ViewModel() {
     private fun getCakeData(): List<CakeDto> {
         return listOf(
             CakeDto("Banana cake", "Donkey kongs favourite", "https://s3-eu-west-1.amazonaws.com/s3.mediafileserver.co.uk/carnation/WebFiles/RecipeImages/lemoncheesecake_lg.jpg"),
-            CakeDto("Other cake", "Marios favourite", "https://s3-eu-west-1.amazonaws.com/s3.mediafileserver.co.uk/carnation/WebFiles/RecipeImages/lemoncheesecake_lg.jpg"),
+            CakeDto("Other cake", "Marios favourite", "https://s3-eu-west-1.amazonaws.com/doesntexist.jpg"),
             CakeDto("Yet another cake", "Marios favourite", "https://s3-eu-west-1.amazonaws.com/s3.mediafileserver.co.uk/carnation/WebFiles/RecipeImages/lemoncheesecake_lg.jpg"),
         )
     }
