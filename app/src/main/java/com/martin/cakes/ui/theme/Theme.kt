@@ -8,17 +8,20 @@ import androidx.compose.runtime.Composable
 
 val AppDarkColorScheme = darkColorScheme(
     // M3 dark Color parameters
+    /*
     primary = Purple200,
     secondary = Purple700,
     tertiary = Teal200
+    */
 )
 val AppLightColorScheme = lightColorScheme(
     // M3 light Color parameters
+
+    /* Other default colors to override
     primary = Purple500,
     secondary = Purple700,
     tertiary = Teal200
 
-    /* Other default colors to override
     background = Color.White,
     surface = Color.White,
     onPrimary = Color.White,
