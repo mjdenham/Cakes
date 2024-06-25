@@ -36,7 +36,7 @@ import com.martin.cakes.ui.theme.CakesTheme
 
 @Composable
 @OptIn(ExperimentalLifecycleComposeApi::class)
-fun CakesScreen(showCakeDetail: (CakeDto) -> Unit, viewModel: CakesViewModel = viewModel(), ) {
+fun CakesScreen(showCakeDetail: (CakeDto) -> Unit, viewModel: CakesViewModel = viewModel()) {
     val cakesResponse: CakesResponse = viewModel.cakes.collectAsStateWithLifecycle(initialValue = CakesResponse.Loading).value
     cakesResponse.let { response ->
         SwipeRefresh(
@@ -56,17 +56,17 @@ fun CakesScreen(showCakeDetail: (CakeDto) -> Unit, viewModel: CakesViewModel = v
 }
 
 @Composable
-fun Cakes(cakes: List<CakeDto>, onClick: (CakeDto) -> Unit) {
+private fun Cakes(cakes: List<CakeDto>, onClick: (CakeDto) -> Unit) {
     LazyColumn {
         items(cakes) { cake ->
-            Cake(cake) { onClick(cake) }
+            CakeItem(cake) { onClick(cake) }
             Divider()
         }
     }
 }
 
 @Composable
-fun Cake(cake: CakeDto, onClick: () -> Unit) {
+private fun CakeItem(cake: CakeDto, onClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -92,7 +92,7 @@ fun Cake(cake: CakeDto, onClick: () -> Unit) {
 }
 
 @Composable
-fun ShowErrorMessage(retry: () -> Unit) {
+private fun ShowErrorMessage(retry: () -> Unit) {
     Column {
         AlertDialog(
             onDismissRequest = {
