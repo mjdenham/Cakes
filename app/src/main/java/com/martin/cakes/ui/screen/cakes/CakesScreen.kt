@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,7 +37,7 @@ import com.martin.cakes.ui.theme.CakesTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CakesScreen(showCakeDetail: (CakeDto) -> Unit, viewModel: CakesViewModel = viewModel()) {
-    val cakesResponse: CakesResponse = viewModel.cakes.collectAsStateWithLifecycle(initialValue = CakesResponse.Loading).value
+    val cakesResponse: CakesResponse by viewModel.cakes.collectAsStateWithLifecycle(initialValue = CakesResponse.Loading)
     cakesResponse.let { response ->
         PullToRefreshBox(
             isRefreshing = response == CakesResponse.Loading,
