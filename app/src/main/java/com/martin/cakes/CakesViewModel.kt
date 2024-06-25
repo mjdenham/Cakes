@@ -1,15 +1,19 @@
 package com.martin.cakes
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.martin.cakes.model.CakeDto
+import com.martin.cakes.model.CakesClient
+import com.martin.cakes.model.ICakesClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CakesViewModel: ViewModel() {
+class CakesViewModel(private val cakesClient: ICakesClient = CakesClient()): ViewModel() {
 
+    //TODO migrate to MutableStateFlow eventually
     private val cakes: MutableLiveData<List<CakeDto>> by lazy {
         MutableLiveData<List<CakeDto>>().also {
             loadCakes()
@@ -22,22 +26,13 @@ class CakesViewModel: ViewModel() {
 
     private fun loadCakes() {
         viewModelScope.launch(Dispatchers.IO) {
-            cakes.postValue(getCakeData())
-//            val response = service.getCakes("mralexgray")
-//            if (response.isSuccessful) {
-//                cakes.postValue(response.body())
-//            } else {
-//                Log.e(TAG, "Error querying repo ${response.message()}")
-//            }
+            val response = cakesClient.getCakes()
+            if (response.isSuccessful) {
+                cakes.postValue(response.body())
+            } else {
+                Log.e(TAG, "Error querying repo ${response.message()}")
+            }
         }
-    }
-
-    private fun getCakeData(): List<CakeDto> {
-        return listOf(
-            CakeDto("Banana cake", "Donkey kongs favourite", "https://s3-eu-west-1.amazonaws.com/s3.mediafileserver.co.uk/carnation/WebFiles/RecipeImages/lemoncheesecake_lg.jpg"),
-            CakeDto("Other cake", "Marios favourite", "https://s3-eu-west-1.amazonaws.com/doesntexist.jpg"),
-            CakeDto("Yet another cake", "Marios favourite", "https://s3-eu-west-1.amazonaws.com/s3.mediafileserver.co.uk/carnation/WebFiles/RecipeImages/lemoncheesecake_lg.jpg"),
-        )
     }
 
     companion object {
