@@ -1,6 +1,7 @@
 package com.martin.cakes.ui.screen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +13,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,22 +30,21 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.martin.cakes.R
 import com.martin.cakes.model.CakeDto
 import com.martin.cakes.ui.screen.cakes.CakesResponse
 import com.martin.cakes.ui.screen.cakes.CakesViewModel
 import com.martin.cakes.ui.theme.CakesTheme
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CakesScreen(showCakeDetail: (CakeDto) -> Unit, viewModel: CakesViewModel = viewModel()) {
     val cakesResponse: CakesResponse = viewModel.cakes.collectAsStateWithLifecycle(initialValue = CakesResponse.Loading).value
     cakesResponse.let { response ->
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(cakesResponse is CakesResponse.Loading),
-            onRefresh = { viewModel.refresh() },
-        ) {
+        val isRefreshing = response is CakesResponse.Loading
+        val pullRefreshState = rememberPullRefreshState(isRefreshing, { viewModel.refresh() })
+
+        Box(Modifier.pullRefresh(pullRefreshState)) {
             if (response is CakesResponse.Success) {
                 Cakes(response.data) { cake ->
                     showCakeDetail(cake)
@@ -49,6 +53,7 @@ fun CakesScreen(showCakeDetail: (CakeDto) -> Unit, viewModel: CakesViewModel = v
             } else if (response is CakesResponse.Error) {
                 ShowErrorMessage { viewModel.refresh() }
             }
+            PullRefreshIndicator(isRefreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
         }
     }
 }
