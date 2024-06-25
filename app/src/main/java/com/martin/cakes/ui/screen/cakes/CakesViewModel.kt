@@ -18,9 +18,6 @@ class CakesViewModel(private val cakesClient: ICakesClient = CakesClient(), priv
     private val _cakes = MutableStateFlow<CakesResponse>(CakesResponse.Loading)
     val cakes: Flow<CakesResponse> = _cakes
 
-    private val _refreshing = MutableStateFlow<Boolean>(false)
-    val refreshing: Flow<Boolean> = _refreshing
-
     val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
         Log.e(TAG, "Error loading cakes", throwable)
         viewModelScope.launch {
@@ -57,7 +54,6 @@ class CakesViewModel(private val cakesClient: ICakesClient = CakesClient(), priv
 
     private suspend fun updateCakes(response: CakesResponse) {
         _cakes.emit(response)
-        _refreshing.emit(response == CakesResponse.Loading)
     }
 
     companion object {
