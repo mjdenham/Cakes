@@ -1,4 +1,4 @@
-package com.martin.cakes
+package com.martin.cakes.ui.screen.cakes
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
