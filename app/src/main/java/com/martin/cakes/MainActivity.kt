@@ -54,7 +54,6 @@ class MainActivity : ComponentActivity() {
             val currentSelectedItem: MutableState<CakeDto?> = remember { mutableStateOf(null) }
 
             CakesTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
                     cakesResponse.value.let { response ->
                         if (response is CakesResponse.Success) {
@@ -73,6 +72,8 @@ class MainActivity : ComponentActivity() {
                             currentSelectedItem.value?.let { selectedCake ->
                                 ShowCakeDetail(selectedCake) { currentSelectedItem.value = null }
                             }
+                        } else if (response is CakesResponse.Error) {
+                            ShowErrorMessage {viewModel.refresh()}
                         }
                     }
                 }
@@ -123,9 +124,6 @@ fun ShowCakeDetail(cake: CakeDto, hideCakeDetail: () -> Unit) {
     Column {
         AlertDialog(
             onDismissRequest = {
-                // Dismiss the dialog when the user clicks outside the dialog or on the back
-                // button. If you want to disable that functionality, simply use an empty
-                // onCloseRequest.
                 hideCakeDetail()
             },
             title = {
@@ -143,6 +141,34 @@ fun ShowCakeDetail(cake: CakeDto, hideCakeDetail: () -> Unit) {
                         hideCakeDetail()
                     }) {
                     Text(stringResource(id = R.string.okay))
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun ShowErrorMessage(retry: () -> Unit) {
+    Column {
+        AlertDialog(
+            onDismissRequest = {
+                retry()
+            },
+            title = {
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    color = MaterialTheme.colors.primary
+                )
+            },
+            text = {
+                Text(text = stringResource(id = R.string.network_error))
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        retry()
+                    }) {
+                    Text(stringResource(id = R.string.retry))
                 }
             }
         )
