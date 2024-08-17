@@ -18,8 +18,7 @@ class CakesViewModel(private val cakesClient: ICakesClient = CakesClient(), priv
     private val _cakes = MutableStateFlow<CakesResponse>(CakesResponse.Loading)
     val cakes: Flow<CakesResponse> = _cakes
 
-    val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
-        Log.e(TAG, "Error loading cakes", throwable)
+    private val coroutineExceptionHandler = CoroutineExceptionHandler{ _, throwable ->
         viewModelScope.launch {
             updateCakes(CakesResponse.Error)
         }
@@ -34,7 +33,6 @@ class CakesViewModel(private val cakesClient: ICakesClient = CakesClient(), priv
     }
 
     private fun loadCakes() {
-        Log.d(TAG, "Loading cakes")
         viewModelScope.launch(dispatcher + coroutineExceptionHandler) {
             updateCakes(CakesResponse.Loading)
 
@@ -46,7 +44,6 @@ class CakesViewModel(private val cakesClient: ICakesClient = CakesClient(), priv
 
                 updateCakes(CakesResponse.Success(organisedCakeList))
             } else {
-                Log.e(TAG, "Error querying repo ${response.message()}")
                 updateCakes(CakesResponse.Error)
             }
         }

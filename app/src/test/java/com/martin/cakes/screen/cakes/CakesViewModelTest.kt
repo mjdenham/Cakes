@@ -51,7 +51,7 @@ class CakesViewModelTest {
     @Test
     fun cakes_error() = runTest {
         val errorViewModel = CakesViewModel(errorTestClient, Dispatchers.Main)
-        val value = errorViewModel.cakes.drop(1).first()
+        val value = errorViewModel.cakes.first()
         Assert.assertTrue("Expected Error", value is CakesResponse.Error)
     }
 
